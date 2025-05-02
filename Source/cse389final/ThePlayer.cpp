@@ -2,6 +2,7 @@
 
 
 #include "ThePlayer.h"
+#include "LaserProjectile.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
@@ -81,20 +82,18 @@ void AThePlayer::look(const FInputActionValue& value)
 
 void AThePlayer::shoot()
 {
-	/*
-	* ProjectileSpawn.Set(100.f, 0.f, 0.f);
+	ProjectileSpawn.Set(100.f, 0.f, 0.f);
 	FVector SpawnLocation = GetActorLocation() + FTransform(GetActorRotation()).TransformVector(ProjectileSpawn);
 	FRotator SpawnRotation = GetActorRotation();
 	SpawnRotation.Pitch += 10.f;
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
-	AProjectile* Bullet = GetWorld()->SpawnActor<AProjectile>(SpawnLocation, SpawnRotation, SpawnParams);
+	ALaserProjectile* Bullet = GetWorld()->SpawnActor<ALaserProjectile>(SpawnLocation, SpawnRotation, SpawnParams);
 	if (Bullet) {
 		FVector LaunchDirection = SpawnRotation.Vector();
 		Bullet->FireInDirection(LaunchDirection);
 	}
-	*/
 }
 
 void AThePlayer::jump(const FInputActionValue& value)
