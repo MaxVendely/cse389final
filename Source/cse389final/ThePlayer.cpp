@@ -84,22 +84,25 @@ void AThePlayer::look(const FInputActionValue& value)
 
 void AThePlayer::shoot()
 {
-	ProjectileSpawn.Set(100.f, 0.f, 0.f);
-	FVector SpawnLocation = GetActorLocation() + FTransform(GetActorRotation()).TransformVector(ProjectileSpawn);
-	FRotator SpawnRotation = GetActorRotation();
-	SpawnRotation.Pitch += 10.f;
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
-	ALaserProjectile* Bullet = GetWorld()->SpawnActor<ALaserProjectile>(SpawnLocation, SpawnRotation, SpawnParams);
-	if (Bullet) {
-		FVector LaunchDirection = SpawnRotation.Vector();
-		Bullet->FireInDirection(LaunchDirection);
-		if (currLasersInMag > 0)
-			currLasersInMag--;
-		else
-			reload();
+	if (canShoot) {
+		ProjectileSpawn.Set(100.f, 0.f, 0.f);
+		FVector SpawnLocation = GetActorLocation() + FTransform(GetActorRotation()).TransformVector(ProjectileSpawn);
+		FRotator SpawnRotation = GetActorRotation();
+		SpawnRotation.Pitch += 10.f;
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+		ALaserProjectile* Bullet = GetWorld()->SpawnActor<ALaserProjectile>(SpawnLocation, SpawnRotation, SpawnParams);
+		if (Bullet) {
+			FVector LaunchDirection = SpawnRotation.Vector();
+			Bullet->FireInDirection(LaunchDirection);
+			if (currLasersInMag > 0)
+				currLasersInMag--;
+			else
+				reload();
+		}
 	}
+	
 }
 
 void AThePlayer::jump(const FInputActionValue& value)
@@ -113,8 +116,21 @@ void AThePlayer::jump(const FInputActionValue& value)
 
 void AThePlayer::reload()
 {
-	if (currLasersInMag < lasersInMag)
+	if (isReloading || currLasersInMag == lasersInMag)
+		return;
+	isReloading = true;
+	canShoot = false;
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AThePlayer::finishReloading, 2.0f, false);
+}
+void AThePlayer::finishReloading() {
+
+	if (currLasersInMag < lasersInMag) {
 		currLasersInMag = lasersInMag;
+		isReloading = false;
+		canShoot = true;
+	}
+		
+
 }
 
 int AThePlayer::GetLasersInMag()

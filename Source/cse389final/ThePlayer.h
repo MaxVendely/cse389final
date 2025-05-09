@@ -48,6 +48,10 @@ protected:
 	float health;
 	int lasersInMag = 15;
 
+	FTimerHandle ReloadTimerHandle;
+	bool isReloading = false;
+	bool canShoot = true;
+
 	UFUNCTION(BlueprintCallable)
 	int GetLasersInMag();
 
@@ -72,4 +76,5 @@ public:
 	void shoot();
 	void jump(const FInputActionValue& value);
 	void reload();
+	void finishReloading();
 };
