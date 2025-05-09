@@ -15,6 +15,7 @@ AThePlayer::AThePlayer()
 	PrimaryActorTick.bCanEverTick = true;
 	score = 0;
 	health = 100;
+	currLasersInMag = 15;
 }
 
 // Called when the game starts or when spawned
@@ -46,13 +47,14 @@ void AThePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	pei->BindAction(ialook, ETriggerEvent::Triggered, this, &AThePlayer::look);
 	pei->BindAction(iashoot, ETriggerEvent::Triggered, this, &AThePlayer::shoot);
 	pei->BindAction(iajump, ETriggerEvent::Triggered, this, &AThePlayer::jump);
+	pei->BindAction(iareload, ETriggerEvent::Triggered, this, &AThePlayer::reload);
 
 }
 
 void AThePlayer::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) {
 	if (OtherComponent->GetCollisionProfileName().ToString() == "Enemy") {
 		health -= 10;
-		UE_LOG(LogTemp, Warning, TEXT("%d"), health);
+		UE_LOG(LogTemp, Warning, TEXT("%f"), health);
 	}
 
 }
@@ -93,6 +95,10 @@ void AThePlayer::shoot()
 	if (Bullet) {
 		FVector LaunchDirection = SpawnRotation.Vector();
 		Bullet->FireInDirection(LaunchDirection);
+		if (currLasersInMag > 0)
+			currLasersInMag--;
+		else
+			reload();
 	}
 }
 
@@ -105,6 +111,16 @@ void AThePlayer::jump(const FInputActionValue& value)
 	}
 }
 
+void AThePlayer::reload()
+{
+	if (currLasersInMag < lasersInMag)
+		currLasersInMag = lasersInMag;
+}
+
+int AThePlayer::GetLasersInMag()
+{
+	return lasersInMag;
+}
 
 void AThePlayer::SetScore(int newScore) {
 	score = newScore;
@@ -114,10 +130,10 @@ int AThePlayer::GetScore() {
 	return score;
 }
 
-int AThePlayer::GetHealth() {
+float AThePlayer::GetHealth() {
 	return health;
 }
 
-void AThePlayer::ChangeHealth(int newHealth) {
+void AThePlayer::ChangeHealth(float newHealth) {
 	health += newHealth;
 }

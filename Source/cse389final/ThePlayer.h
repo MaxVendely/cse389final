@@ -17,7 +17,8 @@ class CSE389FINAL_API AThePlayer : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AThePlayer();
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int currLasersInMag;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -36,14 +37,19 @@ protected:
 	UInputAction* iashoot;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputAction* iajump;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	UInputAction* iareload;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector ProjectileSpawn;
 
 	UCapsuleComponent* CollisionComp;
 
 	int score;
-	int health;
+	float health;
+	int lasersInMag = 15;
+
+	UFUNCTION(BlueprintCallable)
+	int GetLasersInMag();
 
 	void SetScore(int score);
 
@@ -51,9 +57,9 @@ protected:
 	int GetScore();
 
 	UFUNCTION(BlueprintCallable)
-	int GetHealth();
+	float GetHealth();
 
-	void ChangeHealth(int health);
+	void ChangeHealth(float health);
 
 public:	
 	// Called every frame
@@ -65,5 +71,5 @@ public:
 	void look(const FInputActionValue& value);
 	void shoot();
 	void jump(const FInputActionValue& value);
-
+	void reload();
 };
