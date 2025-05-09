@@ -5,7 +5,6 @@
 #include "PatrollingAIController.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "AITypes.h"
-#include "ThePlayer.h"
 
 // Sets default values
 AChasingFlag_AIEnemy::AChasingFlag_AIEnemy()
@@ -17,7 +16,7 @@ AChasingFlag_AIEnemy::AChasingFlag_AIEnemy()
 	PlayerCollisionDetection->SetupAttachment(RootComponent);
 
 	PlayerAttackCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("Player Attack Collision"));
-	PlayerAttackCollision->SetupAttachment(GetMesh(), TEXT("Wolf_-Head"));
+	PlayerAttackCollision->SetupAttachment(GetMesh(), TEXT("Fist"));
 
 	PlayerDetected = false;
 	CanAttackPlayer = false;
@@ -29,6 +28,13 @@ void AChasingFlag_AIEnemy::BeginPlay()
 	Super::BeginPlay();
 	
 	AIController = Cast<APatrollingAIController>(GetController());
+
+	if (AIController == nullptr) {
+		UE_LOG(LogTemp, Warning, TEXT("No AIController found!"));
+		return;
+	}
+
+
 	AIController->GetPathFollowingComponent()->OnRequestFinished.AddUObject(this, &AChasingFlag_AIEnemy::OnAIMoveCompleted);
 
 	PlayerCollisionDetection->OnComponentBeginOverlap.AddDynamic(this,

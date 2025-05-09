@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "ThePlayer.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "ChasingFlag_AIEnemy.generated.h"
