@@ -6,6 +6,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
@@ -84,7 +85,7 @@ void AThePlayer::look(const FInputActionValue& value)
 
 void AThePlayer::shoot()
 {
-	if (canShoot) {
+	if (canShoot && currLasersInMag > 0) {
 		ProjectileSpawn.Set(100.f, 0.f, 0.f);
 		FVector SpawnLocation = GetActorLocation() + FTransform(GetActorRotation()).TransformVector(ProjectileSpawn);
 		FRotator SpawnRotation = GetActorRotation();
@@ -96,12 +97,12 @@ void AThePlayer::shoot()
 		if (Bullet) {
 			FVector LaunchDirection = SpawnRotation.Vector();
 			Bullet->FireInDirection(LaunchDirection);
-			if (currLasersInMag > 0)
-				currLasersInMag--;
-			else
-				reload();
+			currLasersInMag--;
+			if (shootSound)
+				UGameplayStatics::PlaySound2D(this, shootSound);
 		}
-	}
+	} else
+		reload();
 	
 }
 
@@ -120,6 +121,8 @@ void AThePlayer::reload()
 		return;
 	isReloading = true;
 	canShoot = false;
+	if (reloadSound)
+		UGameplayStatics::PlaySound2D(this, reloadSound);
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimerHandle, this, &AThePlayer::finishReloading, 2.0f, false);
 }
 void AThePlayer::finishReloading() {

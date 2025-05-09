@@ -51,6 +51,10 @@ protected:
 	FTimerHandle ReloadTimerHandle;
 	bool isReloading = false;
 	bool canShoot = true;
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* reloadSound;
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* shootSound;
 
 	UFUNCTION(BlueprintCallable)
 	int GetLasersInMag();
